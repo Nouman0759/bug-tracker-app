@@ -4,11 +4,8 @@
     "slug": "bug-tracker-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icons/icon.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "backgroundColor": "#F8F7FF"
-    },
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -26,7 +23,14 @@
       "bundler": "metro"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F8F7FF",
+          "imageWidth": 200
+        }
+      ]
     ]
   }
 }
