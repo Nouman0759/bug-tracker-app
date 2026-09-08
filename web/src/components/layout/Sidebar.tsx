@@ -6,6 +6,7 @@ import clsx from "@/lib/clsx";
 import { useAuth } from "@/context/AuthContext";
 
 const NAV_ITEMS = [
+  { href: "/dashboard", label: "Home", icon: "🏠" },
   { href: "/projects", label: "Projects", icon: "📁" },
   { href: "/issues", label: "Issues", icon: "🐛" },
   { href: "/profile", label: "Profile", icon: "👤" },

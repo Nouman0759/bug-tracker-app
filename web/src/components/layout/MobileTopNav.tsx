@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import clsx from "@/lib/clsx";
 
 const NAV_ITEMS = [
+  { href: "/dashboard", label: "Home", icon: "🏠" },
   { href: "/projects", label: "Projects", icon: "📁" },
   { href: "/issues", label: "Issues", icon: "🐛" },
   { href: "/profile", label: "Profile", icon: "👤" },

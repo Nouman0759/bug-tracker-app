@@ -10,6 +10,7 @@ import {
   IssuesStackParamList,
 } from "./types";
 
+import { DashboardScreen } from "../screens/dashboard/DashboardScreen";
 import { ProjectsScreen } from "../screens/projects/ProjectsScreen";
 import { CreateProjectScreen } from "../screens/projects/CreateProjectScreen";
 import { ProjectDetailsScreen } from "../screens/projects/ProjectDetailsScreen";
@@ -94,6 +95,7 @@ export function MainNavigator() {
         tabBarInactiveTintColor: colors.textMuted,
         tabBarIcon: ({ color, size }) => {
           const iconMap: Record<string, keyof typeof Ionicons.glyphMap> = {
+            DashboardTab: "grid-outline",
             ProjectsTab: "folder-outline",
             IssuesTab: "bug-outline",
             ProfileTab: "person-outline",
@@ -102,6 +104,7 @@ export function MainNavigator() {
         },
       })}
     >
+      <Tab.Screen name="DashboardTab" component={DashboardScreen} options={{ title: "Home" }} />
       <Tab.Screen name="ProjectsTab" component={ProjectsStackNavigator} options={{ title: "Projects" }} />
       <Tab.Screen name="IssuesTab" component={IssuesStackNavigator} options={{ title: "Issues" }} />
       <Tab.Screen name="ProfileTab" component={ProfileScreen} options={{ title: "Profile" }} />
