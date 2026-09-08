@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, spacing, radius, typography } from "../../theme";
+import { colors, spacing, radius, typography, shadow } from "../../theme";
 import { Project } from "../../types/project";
 
 export function ProjectCard({ project, onPress }: { project: Project; onPress: () => void }) {
@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     borderWidth: 1,
     borderColor: colors.border,
+    ...shadow.card,
   },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   name: { ...typography.h3, color: colors.text, flex: 1 },

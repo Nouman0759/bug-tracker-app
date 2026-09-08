@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, View, Text, StyleSheet } from "react-native";
-import { colors, spacing, radius, typography } from "../../theme";
+import { colors, spacing, radius, typography, shadow } from "../../theme";
 import { Issue } from "../../types/issue";
 import { PriorityBadge } from "./PriorityBadge";
 import { IssueStatusBadge } from "./IssueStatusBadge";
@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     borderWidth: 1,
     borderColor: colors.border,
+    ...shadow.card,
   },
   title: { ...typography.bodyBold, color: colors.text, marginBottom: 4 },
   description: { ...typography.caption, color: colors.textMuted, marginBottom: spacing.sm },

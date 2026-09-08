@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { colors, spacing, radius, typography } from "../../theme";
+import { colors, spacing, radius, typography, shadow } from "../../theme";
 import { Comment } from "../../types/comment";
 
 export function CommentItem({ comment }: { comment: Comment }) {
@@ -21,6 +21,9 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: spacing.sm,
     marginBottom: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...shadow.subtle,
   },
   header: { flexDirection: "row", justifyContent: "space-between", marginBottom: 4 },
   author: { ...typography.bodyBold, color: colors.text },

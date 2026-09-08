@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, Text, StyleSheet, ActivityIndicator, ViewStyle } from "react-native";
-import { colors, spacing, radius, typography } from "../../theme";
+import { colors, spacing, radius, typography, shadow } from "../../theme";
 
 interface ButtonProps {
   title: string;
@@ -54,7 +54,13 @@ const variantStyles: Record<string, ViewStyle> = {
   primary: { backgroundColor: colors.primary },
   secondary: { backgroundColor: colors.surfaceLight },
   danger: { backgroundColor: colors.danger },
-  ghost: { backgroundColor: "transparent", borderWidth: 1, borderColor: colors.primary },
+  ghost: {
+    backgroundColor: "transparent",
+    borderWidth: 1.5,
+    borderColor: colors.primary,
+    shadowOpacity: 0,
+    elevation: 0,
+  },
 };
 
 const styles = StyleSheet.create({
@@ -64,6 +70,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     alignItems: "center",
     justifyContent: "center",
+    ...shadow.subtle,
   },
   pressed: { opacity: 0.8 },
   disabled: { opacity: 0.5 },

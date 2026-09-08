@@ -7,7 +7,7 @@
     "icon": "./assets/icons/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "backgroundColor": "#0F172A"
+      "backgroundColor": "#F8F7FF"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -19,7 +19,7 @@
     "android": {
       "package": "com.yourcompany.bugtracker",
       "adaptiveIcon": {
-        "backgroundColor": "#0F172A"
+        "backgroundColor": "#F8F7FF"
       }
     },
     "web": {

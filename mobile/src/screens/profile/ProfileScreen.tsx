@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { ScreenContainer } from "../../components/common/ScreenContainer";
 import { Button } from "../../components/common/Button";
 import { useAuth } from "../../hooks/useAuth";
-import { colors, spacing, radius, typography } from "../../theme";
+import { colors, spacing, radius, typography, shadow } from "../../theme";
 
 export function ProfileScreen() {
   const { user, logout } = useAuth();
@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: spacing.md,
+    ...shadow.card,
   },
   avatarText: { color: "#fff", fontSize: 32, fontWeight: "700" },
   name: { ...typography.h2, color: colors.text },

@@ -1,24 +1,33 @@
 export const colors = {
-  background: "#0F172A",
-  surface: "#1E293B",
-  surfaceLight: "#334155",
-  primary: "#6366F1",
-  primaryDark: "#4F46E5",
-  text: "#F1F5F9",
-  textMuted: "#94A3B8",
-  border: "#334155",
+  // Vibrant light theme
+  background: "#F8F7FF",
+  surface: "#FFFFFF",
+  surfaceLight: "#F1EDFE",
+  primary: "#7C3AED",
+  primaryDark: "#6023D4",
+  primaryLight: "#EFE7FE",
+  text: "#1E1B34",
+  textMuted: "#6E6A8C",
+  border: "#EAE5F9",
   danger: "#EF4444",
-  success: "#22C55E",
+  success: "#16A34A",
   warning: "#F59E0B",
 
-  priorityLow: "#22C55E",
+  priorityLow: "#16A34A",
   priorityMedium: "#F59E0B",
   priorityHigh: "#F97316",
-  priorityCritical: "#EF4444",
+  priorityCritical: "#E11D48",
 
-  statusOpen: "#6366F1",
+  statusOpen: "#7C3AED",
   statusInProgress: "#F59E0B",
-  statusResolved: "#22C55E",
-  statusClosed: "#64748B",
-  statusReopened: "#EF4444",
+  statusResolved: "#16A34A",
+  statusClosed: "#8B87A8",
+  statusReopened: "#E11D48",
+
+  // Accent gradient pair used for standout header/hero surfaces
+  accentStart: "#8B5CF6",
+  accentEnd: "#6023D4",
+
+  // Shadow color for elevated cards on a light background
+  shadow: "#4C1D95",
 };

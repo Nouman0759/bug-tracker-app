@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Ionicons } from "@expo/vector-icons";
 import { Input } from "../../components/common/Input";
 import { Button } from "../../components/common/Button";
 import { useAuth } from "../../hooks/useAuth";
@@ -39,6 +40,9 @@ export function LoginScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <View style={styles.container}>
+        <View style={styles.logoBadge}>
+          <Ionicons name="bug" size={30} color={colors.primary} />
+        </View>
         <Text style={styles.title}>Bug Tracker</Text>
         <Text style={styles.subtitle}>Sign in to continue</Text>
 
@@ -75,7 +79,17 @@ export function LoginScreen() {
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: colors.background },
   container: { flex: 1, justifyContent: "center", padding: spacing.lg },
-  title: { ...typography.h1, color: colors.text, textAlign: "center" },
+  logoBadge: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: colors.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    marginBottom: spacing.md,
+  },
+  title: { ...typography.h1, color: colors.primaryDark, textAlign: "center" },
   subtitle: {
     ...typography.body,
     color: colors.textMuted,

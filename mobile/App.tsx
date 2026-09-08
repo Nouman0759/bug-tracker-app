@@ -19,7 +19,7 @@ export default function App() {
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <StatusBar style="light" />
+          <StatusBar style="dark" />
           <AppNavigator />
         </AuthProvider>
       </QueryClientProvider>

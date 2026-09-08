@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { Modal as RNModal, View, StyleSheet, Pressable } from "react-native";
-import { colors, radius, spacing } from "../../theme";
+import { colors, radius, spacing, shadow } from "../../theme";
 
 interface ModalProps {
   visible: boolean;
@@ -23,7 +23,7 @@ export function Modal({ visible, onClose, children }: ModalProps) {
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: "rgba(30,27,52,0.45)",
     justifyContent: "flex-end",
   },
   content: {
@@ -32,5 +32,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: radius.lg,
     padding: spacing.lg,
     maxHeight: "80%",
+    ...shadow.raised,
   },
 });
