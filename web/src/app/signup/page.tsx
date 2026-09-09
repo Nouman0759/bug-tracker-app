@@ -26,7 +26,7 @@ export default function SignupPage() {
     setLoading(true);
     try {
       await signup(name.trim(), email.trim(), password);
-      router.replace("/projects");
+      router.replace("dashboard");
     } catch (err: any) {
       setError(err.message || "Signup failed");
     } finally {

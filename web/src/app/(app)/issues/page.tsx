@@ -7,6 +7,7 @@ import { useIssues } from "@/hooks/useIssues";
 import { useDebounce } from "@/hooks/useDebounce";
 import { IssueCard } from "@/components/issues/IssueCard";
 import { IssueSearchBar, IssueFilters } from "@/components/issues/IssueFilters";
+import { Button } from "@/components/common/Button";
 import { Loader, ErrorMessage, EmptyState } from "@/components/common/Feedback";
 import { IssueStatus, IssuePriority } from "@/types/issue";
 
@@ -35,27 +36,39 @@ function IssuesPageInner() {
   });
 
   const issues = data?.issues ?? [];
+  const newIssueHref = projectId ? `/issues/new?projectId=${projectId}` : "/issues/new";
 
   return (
     <div>
-      <div className="mb-sm flex items-center justify-between">
-        <h1 className="text-h1 text-text">Issues</h1>
+      <div className="mb-md flex items-center justify-between">
+        <div>
+          <h1 className="text-h1 text-text">Issues</h1>
+          <p className="mt-1 text-caption text-text-muted">
+            {issues.length} {issues.length === 1 ? "issue" : "issues"}
+          </p>
+        </div>
+
+        <Link href={newIssueHref} className="hidden sm:block">
+          <Button>+ New Issue</Button>
+        </Link>
         <Link
-          href={projectId ? `/issues/new?projectId=${projectId}` : "/issues/new"}
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xl text-white shadow-subtle"
+          href={newIssueHref}
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-xl text-white shadow-subtle sm:hidden"
           aria-label="Report issue"
         >
           +
         </Link>
       </div>
 
-      <IssueSearchBar value={search} onChange={setSearch} />
-      <IssueFilters
-        status={status}
-        priority={priority}
-        onChangeStatus={setStatus}
-        onChangePriority={setPriority}
-      />
+      <div className="mb-lg flex flex-col gap-sm md:flex-row md:items-center">
+        <IssueSearchBar value={search} onChange={setSearch} />
+        <IssueFilters
+          status={status}
+          priority={priority}
+          onChangeStatus={setStatus}
+          onChangePriority={setPriority}
+        />
+      </div>
 
       {isLoading ? (
         <Loader />
@@ -64,7 +77,7 @@ function IssuesPageInner() {
       ) : issues.length === 0 ? (
         <EmptyState title="No issues found" subtitle="Try adjusting your filters, or report a new issue." />
       ) : (
-        <div className="space-y-sm">
+        <div className="grid grid-cols-1 gap-md md:grid-cols-2 lg:grid-cols-3">
           {issues.map((issue) => (
             <IssueCard key={issue._id} issue={issue} />
           ))}

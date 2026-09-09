@@ -8,7 +8,7 @@ export function IssueCard({ issue }: { issue: Issue }) {
   return (
     <Link
       href={`/issues/${issue._id}`}
-      className="block rounded-md border border-border bg-surface p-md shadow-card transition-opacity hover:opacity-90"
+      className="block rounded-md border border-border bg-surface p-md shadow-card transition-all hover:-translate-y-0.5 hover:shadow-raised focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
     >
       <p className="mb-1 truncate text-bodyBold text-text">{issue.title}</p>
       <p className="mb-sm line-clamp-2 text-caption text-text-muted">{issue.description}</p>

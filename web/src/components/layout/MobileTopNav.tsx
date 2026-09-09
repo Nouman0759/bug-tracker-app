@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LayoutGrid, Folder, Bug, User } from "lucide-react";
 import clsx from "@/lib/clsx";
 
 const NAV_ITEMS = [
-  { href: "/dashboard", label: "Home", icon: "🏠" },
-  { href: "/projects", label: "Projects", icon: "📁" },
-  { href: "/issues", label: "Issues", icon: "🐛" },
-  { href: "/profile", label: "Profile", icon: "👤" },
+  { href: "/dashboard", label: "Home", icon: LayoutGrid },
+  { href: "/projects", label: "Projects", icon: Folder },
+  { href: "/issues", label: "Issues", icon: Bug },
+  { href: "/profile", label: "Profile", icon: User },
 ];
 
 export function MobileTopNav() {
@@ -17,6 +18,7 @@ export function MobileTopNav() {
     <div className="flex items-center justify-around border-b border-border bg-surface py-sm md:hidden">
       {NAV_ITEMS.map((item) => {
         const active = pathname.startsWith(item.href);
+        const Icon = item.icon;
         return (
           <Link
             key={item.href}
@@ -26,7 +28,7 @@ export function MobileTopNav() {
               active ? "text-primary" : "text-text-muted"
             )}
           >
-            <span className="text-lg leading-none">{item.icon}</span>
+            <Icon size={20} strokeWidth={1.75} />
             {item.label}
           </Link>
         );

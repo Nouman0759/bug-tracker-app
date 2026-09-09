@@ -13,7 +13,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
         <div className="flex min-h-screen flex-1 flex-col">
           <MobileTopNav />
-          <main className="mx-auto w-full max-w-3xl flex-1 px-md py-lg md:px-xl">{children}</main>
+          <main className="mx-auto w-full max-w-7xl flex-1 px-md py-lg md:px-xl lg:px-xxl">
+            {children}
+          </main>
         </div>
       </div>
     </RequireAuth>

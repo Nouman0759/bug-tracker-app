@@ -19,16 +19,31 @@ export default function ProjectDetailsPage() {
   const owner = isProjectOwner(project, user);
 
   return (
-    <div>
-      <h1 className="text-h1 text-text">{project.name}</h1>
-      {project.description ? (
-        <p className="mt-xs text-body text-text-muted">{project.description}</p>
-      ) : null}
+    <div className="max-w-3xl">
+      <div className="flex items-start justify-between gap-md">
+        <div>
+          <h1 className="text-h1 text-text">{project.name}</h1>
+          {project.description ? (
+            <p className="mt-xs text-body text-text-muted">{project.description}</p>
+          ) : null}
+        </div>
+        <Link href={`/issues/new?projectId=${project._id}`}>
+          <Button>+ New Issue</Button>
+        </Link>
+      </div>
 
-      <p className="mt-lg text-caption text-text-muted">Owner</p>
-      <p className="mt-1 text-body text-text">{project.owner.name}</p>
+      <div className="mt-lg grid grid-cols-2 gap-md sm:grid-cols-3">
+        <div className="rounded-md border border-border bg-surface p-md">
+          <p className="text-caption text-text-muted">Owner</p>
+          <p className="mt-1 text-bodyBold text-text">{project.owner.name}</p>
+        </div>
+        <div className="rounded-md border border-border bg-surface p-md">
+          <p className="text-caption text-text-muted">Members</p>
+          <p className="mt-1 text-bodyBold text-text">{project.members.length}</p>
+        </div>
+      </div>
 
-      <p className="mt-lg text-caption text-text-muted">Members ({project.members.length})</p>
+      <p className="mt-lg text-caption text-text-muted">Team</p>
       <p className="mt-1 text-body text-text">
         {project.members
           .filter((m) => m.user)
@@ -36,22 +51,15 @@ export default function ProjectDetailsPage() {
           .join(", ") || "No members yet"}
       </p>
 
-      <div className="mt-lg flex flex-col gap-sm">
+      <div className="mt-lg flex flex-wrap gap-sm">
         <Link href={`/issues?projectId=${project._id}`}>
-          <Button fullWidth>View Issues</Button>
+          <Button>View Issues</Button>
         </Link>
         {owner && (
           <Link href={`/projects/${project._id}/members`}>
-            <Button variant="secondary" fullWidth>
-              Manage Members
-            </Button>
+            <Button variant="secondary">Manage Members</Button>
           </Link>
         )}
-        <Link href={`/issues/new?projectId=${project._id}`}>
-          <Button variant="ghost" fullWidth>
-            Report New Issue
-          </Button>
-        </Link>
       </div>
     </div>
   );

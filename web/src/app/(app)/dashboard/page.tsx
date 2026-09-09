@@ -1,136 +1,263 @@
 "use client";
 
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
-import { useProjects } from "@/hooks/useProjects";
+import { useMemo } from "react";
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  LineChart,
+  Line,
+} from "recharts";
 import { useIssues } from "@/hooks/useIssues";
-import { Loader } from "@/components/common/Feedback";
-import { IssueStatusBadge, PriorityBadge } from "@/components/issues/Badges";
+import { useProjects } from "@/hooks/useProjects";
+import { Loader, ErrorMessage } from "@/components/common/Feedback";
+import { Button } from "@/components/common/Button";
+import { IssueCard } from "@/components/issues/IssueCard";
+import { IssueStatus, IssuePriority } from "@/types/issue";
+
+const STATUS_COLORS: Record<IssueStatus, string> = {
+  open: "#7C3AED",
+  in_progress: "#F59E0B",
+  resolved: "#16A34A",
+  closed: "#8B87A8",
+  reopened: "#E11D48",
+};
+const STATUS_LABELS: Record<IssueStatus, string> = {
+  open: "Open",
+  in_progress: "In Progress",
+  resolved: "Resolved",
+  closed: "Closed",
+  reopened: "Reopened",
+};
+const PRIORITY_COLORS: Record<IssuePriority, string> = {
+  low: "#16A34A",
+  medium: "#F59E0B",
+  high: "#F97316",
+  critical: "#E11D48",
+};
 
 export default function DashboardPage() {
-  const { user } = useAuth();
   const { data: projects, isLoading: projectsLoading } = useProjects();
-  const { data, isLoading: issuesLoading } = useIssues({ limit: 50 });
+  const {
+    data: issuesData,
+    isLoading: issuesLoading,
+    isError,
+    error,
+    refetch,
+  } = useIssues({ limit: 100 });
+
+  const issues = issuesData?.issues ?? [];
+
+  const stats = useMemo(() => {
+    const statusCounts: Record<IssueStatus, number> = {
+      open: 0,
+      in_progress: 0,
+      resolved: 0,
+      closed: 0,
+      reopened: 0,
+    };
+    const priorityCounts: Record<IssuePriority, number> = {
+      low: 0,
+      medium: 0,
+      high: 0,
+      critical: 0,
+    };
+
+    for (const issue of issues) {
+      statusCounts[issue.status]++;
+      priorityCounts[issue.priority]++;
+    }
+
+    const openIssues = statusCounts.open + statusCounts.in_progress + statusCounts.reopened;
+    const resolvedIssues = statusCounts.resolved + statusCounts.closed;
+
+    // Issues created per day, last 14 days
+    const days: { date: string; label: string; count: number }[] = [];
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      days.push({
+        date: key,
+        label: d.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+        count: 0,
+      });
+    }
+    const dayIndex = new Map(days.map((d, i) => [d.date, i]));
+    for (const issue of issues) {
+      const key = issue.createdAt.slice(0, 10);
+      const idx = dayIndex.get(key);
+      if (idx !== undefined) days[idx].count++;
+    }
+
+    const statusChartData = (Object.keys(statusCounts) as IssueStatus[])
+      .filter((s) => statusCounts[s] > 0)
+      .map((s) => ({ name: STATUS_LABELS[s], value: statusCounts[s], color: STATUS_COLORS[s] }));
+
+    const priorityChartData = (Object.keys(priorityCounts) as IssuePriority[]).map((p) => ({
+      name: p[0].toUpperCase() + p.slice(1),
+      value: priorityCounts[p],
+      color: PRIORITY_COLORS[p],
+    }));
+
+    const recentIssues = [...issues]
+      .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
+      .slice(0, 4);
+
+    return {
+      total: issues.length,
+      openIssues,
+      resolvedIssues,
+      statusChartData,
+      priorityChartData,
+      trend: days,
+      recentIssues,
+    };
+  }, [issues]);
 
   const isLoading = projectsLoading || issuesLoading;
-  const issues = data?.issues ?? [];
-
-  const openCount = issues.filter((i) => i.status === "open").length;
-  const inProgressCount = issues.filter((i) => i.status === "in_progress").length;
-  const resolvedCount = issues.filter((i) => i.status === "resolved").length;
-  const projectCount = projects?.length ?? 0;
-
-  const recentIssues = issues.slice(0, 5);
-
-  const greeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 17) return "Good afternoon";
-    return "Good evening";
-  };
-
-  if (isLoading) return <Loader />;
 
   return (
     <div>
-      {/* Header */}
       <div className="mb-lg flex items-center justify-between">
         <div>
-          <p className="text-caption text-text-muted">{greeting()},</p>
-          <h1 className="text-h2 text-text">{user?.name || "User"}</h1>
+          <h1 className="text-h1 text-text">Dashboard</h1>
+          <p className="mt-1 text-caption text-text-muted">
+            An overview of your projects and issues.
+          </p>
         </div>
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-light text-primary">
-          👤
-        </div>
+        <Link href="/issues/new">
+          <Button>+ New Issue</Button>
+        </Link>
       </div>
 
-      {/* Stats */}
-      <div className="mb-lg grid grid-cols-2 gap-sm sm:grid-cols-4">
-        <StatCard emoji="🐛" label="Open" value={openCount} color="#7C3AED" />
-        <StatCard emoji="⏱️" label="In Progress" value={inProgressCount} color="#F59E0B" />
-        <StatCard emoji="✅" label="Resolved" value={resolvedCount} color="#16A34A" />
-        <StatCard emoji="📁" label="Projects" value={projectCount} color="#7C3AED" />
-      </div>
-
-      {/* Quick Actions */}
-      <h2 className="mb-sm text-h3 text-text">Quick Actions</h2>
-      <div className="mb-lg grid grid-cols-3 gap-sm">
-        <ActionCard href="/issues/new" emoji="➕" label="New Issue" />
-        <ActionCard href="/projects/new" emoji="📂" label="New Project" />
-        <ActionCard href="/issues" emoji="📋" label="All Issues" />
-      </div>
-
-      {/* Recent Issues */}
-      <h2 className="mb-sm text-h3 text-text">Recent Issues</h2>
-
-      {recentIssues.length === 0 ? (
-        <div className="rounded-md border border-border bg-surface p-lg text-center">
-          <p className="text-caption text-text-muted">No issues yet. Create your first one!</p>
-        </div>
+      {isLoading ? (
+        <Loader />
+      ) : isError ? (
+        <ErrorMessage message={(error as Error).message} onRetry={refetch} />
       ) : (
-        <div className="space-y-sm">
-          {recentIssues.map((issue) => (
-            <Link
-              key={issue._id}
-              href={`/issues/${issue._id}`}
-              className="block rounded-md border border-border bg-surface p-md transition-shadow hover:shadow-card"
-            >
-              <div className="mb-xs flex items-center justify-between gap-sm">
-                <p className="truncate text-bodyBold text-text">{issue.title}</p>
-                <PriorityBadge priority={issue.priority} />
+        <>
+          <div className="mb-lg grid grid-cols-2 gap-md sm:grid-cols-4">
+            <StatCard label="Projects" value={projects?.length ?? 0} />
+            <StatCard label="Total Issues" value={stats.total} />
+            <StatCard label="Open" value={stats.openIssues} accent="primary" />
+            <StatCard label="Resolved" value={stats.resolvedIssues} accent="success" />
+          </div>
+
+          <div className="mb-lg grid grid-cols-1 gap-md lg:grid-cols-3">
+            <div className="rounded-md border border-border bg-surface p-md lg:col-span-2">
+              <p className="mb-sm text-bodyBold text-text">Issues created (last 14 days)</p>
+              <ResponsiveContainer width="100%" height={220}>
+                <LineChart data={stats.trend}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#EAE5F9" />
+                  <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#6E6A8C" }} />
+                  <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#6E6A8C" }} width={24} />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="count" stroke="#7C3AED" strokeWidth={2} dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="rounded-md border border-border bg-surface p-md">
+              <p className="mb-sm text-bodyBold text-text">By status</p>
+              {stats.statusChartData.length === 0 ? (
+                <p className="py-lg text-center text-caption text-text-muted">No issues yet</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={220}>
+                  <PieChart>
+                    <Pie
+                      data={stats.statusChartData}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={45}
+                      outerRadius={75}
+                      paddingAngle={2}
+                    >
+                      {stats.statusChartData.map((entry) => (
+                        <Cell key={entry.name} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
+
+          <div className="mb-lg grid grid-cols-1 gap-md lg:grid-cols-3">
+            <div className="rounded-md border border-border bg-surface p-md lg:col-span-1">
+              <p className="mb-sm text-bodyBold text-text">By priority</p>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={stats.priorityChartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#EAE5F9" />
+                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#6E6A8C" }} />
+                  <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#6E6A8C" }} width={24} />
+                  <Tooltip />
+                  <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+                    {stats.priorityChartData.map((entry) => (
+                      <Cell key={entry.name} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="rounded-md border border-border bg-surface p-md lg:col-span-2">
+              <div className="mb-sm flex items-center justify-between">
+                <p className="text-bodyBold text-text">Recent issues</p>
+                <Link href="/issues" className="text-caption text-primary">
+                  View all
+                </Link>
               </div>
-              <div className="flex items-center gap-sm">
-                <IssueStatusBadge status={issue.status} />
-                <span className="text-caption text-text-muted">
-                  {typeof issue.project === "object" ? issue.project.name : "Project"}
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
+              {stats.recentIssues.length === 0 ? (
+                <p className="py-lg text-center text-caption text-text-muted">
+                  No issues reported yet.
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 gap-sm sm:grid-cols-2">
+                  {stats.recentIssues.map((issue) => (
+                    <IssueCard key={issue._id} issue={issue} />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
 }
 
 function StatCard({
-  emoji,
   label,
   value,
-  color,
+  accent,
 }: {
-  emoji: string;
   label: string;
   value: number;
-  color: string;
+  accent?: "primary" | "success";
 }) {
   return (
-    <div className="flex flex-col items-center rounded-md border border-border bg-surface p-sm text-center">
-      <span className="text-lg" style={{ color }}>
-        {emoji}
-      </span>
-      <p className="mt-1 text-h3 text-text">{value}</p>
-      <p className="text-small text-text-muted">{label}</p>
+    <div className="rounded-md border border-border bg-surface p-md shadow-subtle">
+      <p className="text-caption text-text-muted">{label}</p>
+      <p
+        className={
+          "mt-1 text-h1 " +
+          (accent === "primary" ? "text-primary" : accent === "success" ? "text-success" : "text-text")
+        }
+      >
+        {value}
+      </p>
     </div>
-  );
-}
-
-function ActionCard({
-  href,
-  emoji,
-  label,
-}: {
-  href: string;
-  emoji: string;
-  label: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="flex flex-col items-center rounded-md border border-border bg-surface py-md transition-shadow hover:shadow-card"
-    >
-      <span className="text-2xl">{emoji}</span>
-      <span className="mt-1.5 text-caption font-semibold text-text">{label}</span>
-    </Link>
   );
 }

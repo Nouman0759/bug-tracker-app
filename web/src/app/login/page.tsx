@@ -26,7 +26,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(email.trim(), password);
-      router.replace("/projects");
+      router.replace("/dashboard");
     } catch (err: any) {
       setError(err.message || "Login failed");
     } finally {

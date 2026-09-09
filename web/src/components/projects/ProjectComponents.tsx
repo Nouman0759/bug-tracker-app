@@ -10,7 +10,7 @@ export function ProjectCard({ project }: { project: Project }) {
   return (
     <Link
       href={`/projects/${project._id}`}
-      className="block rounded-md border border-border bg-surface p-md shadow-card transition-opacity hover:opacity-90"
+      className="block rounded-md border border-border bg-surface p-md shadow-card transition-all hover:-translate-y-0.5 hover:shadow-raised focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
     >
       <div className="flex items-center justify-between">
         <p className="truncate text-h3 text-text">{project.name}</p>
@@ -54,7 +54,7 @@ export function ProjectForm({
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="max-w-lg">
       <Input
         label="Project Name"
         value={name}
